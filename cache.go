@@ -40,7 +40,7 @@ func (c *cache) Set(key string, value interface{}, ttl time.Duration) {
 func (c *cache) Get(key string) (interface{}, error) {
 	c.mu.RLock()
 
-	value, ok := c.storage[key]
+	item, ok := c.storage[key]
 
 	c.mu.RUnlock()
 
@@ -48,11 +48,11 @@ func (c *cache) Get(key string) (interface{}, error) {
 		return nil, ErrorNotFound
 	}
 
-	if value.dedlineTime.Before(time.Now()) {
+	if item.dedlineTime.Before(time.Now()) {
 		return nil, ErrorExpired
 	}
 
-	return value, nil
+	return item.value, nil
 }
 
 func (c *cache) Delete(key string) {
